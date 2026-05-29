@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🍮Chat — AI 智能助手</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   🍮Chat v2 — Design System (ui-ux-pro-max)
+   Style: Micro-interactions + Modern Dark
+   Colors: Blue/Indigo primary, Emerald accent
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --color-primary: #2563EB; --color-primary-hover: #1D4ED8;
+  --color-primary-muted: rgba(37,99,235,0.10); --color-secondary: #6366F1;
+  --color-accent: #059669; --color-accent-hover: #047857;
+  --color-bg: #F8FAFC; --color-surface: #FFFFFF;
+  --color-surface-hover: #F1F5F9; --color-surface-elevated: #FFFFFF;
+  --color-foreground: #0F172A; --color-foreground-muted: #64748B;
+  --color-border: #E2E8F0; --color-border-light: #F1F5F9;
+  --color-destructive: #DC2626; --color-destructive-hover: #B91C1C;
+  --color-ring: #2563EB;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+  --text-xs: 0.75rem; --text-sm: 0.875rem; --text-base: 1rem;
+  --text-lg: 1.125rem; --text-xl: 1.25rem;
+  --leading-relaxed: 1.625;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px;
+  --radius-xl: 20px; --radius-full: 9999px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --duration-fast: 150ms; --duration-normal: 200ms; --duration-slow: 300ms;
+  --sidebar-width: 280px; --header-height: 56px;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0B1121; --color-surface: #111827;
+  --color-surface-hover: #1E293B; --color-surface-elevated: #1A2332;
+  --color-foreground: #F1F5F9; --color-foreground-muted: #94A3B8;
+  --color-border: #1E293B; --color-border-light: #1A2332;
+  --color-primary-muted: rgba(37,99,235,0.15);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -4px rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans); font-size: var(--text-base);
+  line-height: var(--leading-relaxed); color: var(--color-foreground);
+  background: var(--color-bg); height: 100vh; height: 100dvh;
+  display: flex; overflow: hidden;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: var(--sidebar-width); background: var(--color-surface);
+  border-right: 1px solid var(--color-border); display: flex;
+  flex-direction: column; flex-shrink: 0;
+  transition: transform var(--duration-slow) var(--ease-out); z-index: 30;
+}
+.sidebar-header {
+  padding: var(--space-4) var(--space-5); display: flex;
+  align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--color-border); height: var(--header-height);
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-weight: 700; font-size: var(--text-lg); color: var(--color-primary);
+  letter-spacing: -0.01em;
+}
+.sidebar-logo svg { flex-shrink: 0; }
+
+.btn-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  border: 1px solid var(--color-border); background: var(--color-surface);
+  color: var(--color-foreground-muted); cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  min-width: 44px; min-height: 44px;
+}
+.btn-icon:hover { background: var(--color-surface-hover); color: var(--color-foreground); }
+.btn-icon:active { transform: scale(0.95); }
+
+.btn-new-chat {
+  margin: var(--space-3) var(--space-4); padding: var(--space-3) var(--space-4);
+  background: var(--color-primary); color: #FFF; border: none;
+  border-radius: var(--radius-md); cursor: pointer; font-size: var(--text-sm);
+  font-weight: 600; font-family: var(--font-sans); display: flex;
+  align-items: center; justify-content: center; gap: var(--space-2);
+  transition: all var(--duration-fast) var(--ease-out);
+  box-shadow: var(--shadow-sm); min-height: 44px;
+}
+.btn-new-chat:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-md); }
+.btn-new-chat:active { transform: scale(0.97); }
+
+.conv-list { flex: 1; overflow-y: auto; padding: var(--space-2) var(--space-3); }
+
+.conv-item {
+  padding: var(--space-3); margin: 1px 0; border-radius: var(--radius-md);
+  cursor: pointer; font-size: var(--text-sm); display: flex;
+  justify-content: space-between; align-items: center;
+  transition: background var(--duration-fast) var(--ease-out);
+  gap: var(--space-2); min-height: 44px; color: var(--color-foreground-muted);
+}
+.conv-item:hover { background: var(--color-surface-hover); color: var(--color-foreground); }
+.conv-item.active { background: var(--color-primary-muted); color: var(--color-primary); font-weight: 500; }
+.conv-item .conv-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.conv-item .del-btn {
+  opacity: 0; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; min-width: 44px; min-height: 44px;
+  background: none; border: none; color: var(--color-destructive);
+  cursor: pointer; border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-out); flex-shrink: 0;
+}
+.conv-item:hover .del-btn { opacity: 1; }
+.conv-item .del-btn:hover { background: rgba(220,38,38,0.1); }
+
+.sidebar-footer {
+  padding: var(--space-3) var(--space-4); border-top: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: var(--text-xs); color: var(--color-foreground-muted);
+}
+
+/* ── Main ── */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--color-bg); }
+
+.chat-header {
+  padding: 0 var(--space-5); height: var(--header-height); display: flex;
+  align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--color-border); background: var(--color-surface);
+  flex-shrink: 0;
+}
+.chat-header-left { display: flex; align-items: center; gap: var(--space-3); }
+.chat-header-right { display: flex; align-items: center; gap: var(--space-3); }
+.chat-header-title { font-size: var(--text-sm); font-weight: 600; color: var(--color-foreground); }
+.chat-header-subtitle { font-size: var(--text-xs); color: var(--color-foreground-muted); }
+
+.user-avatar {
+  width: 32px; height: 32px; border-radius: var(--radius-full);
+  background: var(--color-primary); color: #FFF; display: flex;
+  align-items: center; justify-content: center;
+  font-size: var(--text-xs); font-weight: 600; cursor: pointer;
+  transition: box-shadow var(--duration-fast) var(--ease-out);
+}
+.user-avatar:hover { box-shadow: 0 0 0 3px var(--color-primary-muted); }
+
+.user-menu {
+  position: absolute; top: var(--header-height); right: var(--space-4);
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+  padding: var(--space-2); min-width: 160px; z-index: 50; display: none;
+}
+.user-menu.show { display: block; }
+.user-menu-item {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm);
+  font-size: var(--text-sm); color: var(--color-foreground); cursor: pointer;
+  border: none; background: none; width: 100%;
+  font-family: var(--font-sans); text-align: left;
+  min-height: 36px;
+}
+.user-menu-item:hover { background: var(--color-surface-hover); }
+.user-menu-item.danger { color: var(--color-destructive); }
+
+/* ── Messages ── */
+.messages {
+  flex: 1; overflow-y: auto; padding: var(--space-6);
+  display: flex; flex-direction: column; gap: var(--space-5);
+  scroll-behavior: smooth;
+}
+
+.welcome {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: var(--space-4);
+  padding: var(--space-10); text-align: center;
+}
+.welcome-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background-image: url("/static/pudding-avatar.jpg");
+  background-size: cover; background-position: center;
+  box-shadow: var(--shadow-md);
+}
+.welcome-title { font-size: var(--text-xl); font-weight: 700; letter-spacing: -0.01em; }
+.welcome-sub { font-size: var(--text-sm); color: var(--color-foreground-muted); max-width: 360px; }
+
+/* ── Message Bubbles ── */
+.message {
+  display: flex; gap: var(--space-3); max-width: 78%;
+  animation: msg-enter var(--duration-normal) var(--ease-out);
+  position: relative; group: true;
+}
+@keyframes msg-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.message.user { align-self: flex-end; flex-direction: row-reverse; }
+.message.assistant { align-self: flex-start; }
+
+.avatar {
+  width: 32px; height: 32px; border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: var(--text-xs); font-weight: 600;
+}
+.message.user .avatar { background: var(--color-primary); color: #FFF; }
+.message.assistant .avatar {
+  background: var(--color-secondary); color: #FFF;
+  background-image: url("/static/pudding-avatar.jpg");
+  background-size: cover; background-position: center; font-size: 0;
+}
+
+.bubble {
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg);
+  font-size: var(--text-sm); line-height: var(--leading-relaxed);
+  word-break: break-word; position: relative; min-width: 60px;
+}
+.message.user .bubble { background: var(--color-primary); color: #FFF; border-bottom-right-radius: var(--radius-sm); }
+.message.assistant .bubble {
+  background: var(--color-surface-elevated); color: var(--color-foreground);
+  border-bottom-left-radius: var(--radius-sm); border: 1px solid var(--color-border-light);
+}
+
+/* ── Action Bar (hover on assistant) ── */
+.msg-actions {
+  display: flex; gap: var(--space-1); margin-top: var(--space-2);
+  opacity: 0; transition: opacity var(--duration-fast) var(--ease-out);
+}
+.message.assistant:hover .msg-actions,
+.message.assistant:focus-within .msg-actions { opacity: 1; }
+
+.msg-action-btn {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border); background: var(--color-surface);
+  color: var(--color-foreground-muted); cursor: pointer;
+  font-size: var(--text-xs); font-family: var(--font-sans);
+  transition: all var(--duration-fast) var(--ease-out);
+  min-height: 32px; white-space: nowrap;
+}
+.msg-action-btn:hover { background: var(--color-surface-hover); color: var(--color-foreground); border-color: var(--color-foreground-muted); }
+.msg-action-btn.copied { color: var(--color-accent); border-color: var(--color-accent); }
+
+/* ── Typing Indicator ── */
+.typing-indicator {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4) 0; animation: msg-enter var(--duration-normal) var(--ease-out);
+}
+.typing-dots { display: flex; gap: 4px; }
+.typing-dots span {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--color-foreground-muted);
+  animation: dot-bounce 1.4s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ── Stop Button ── */
+.stop-btn {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3); margin: var(--space-2) 0;
+  border: 1px solid var(--color-border); border-radius: var(--radius-md);
+  background: var(--color-surface); color: var(--color-destructive);
+  cursor: pointer; font-size: var(--text-xs); font-family: var(--font-sans);
+  transition: all var(--duration-fast) var(--ease-out); min-height: 36px;
+}
+.stop-btn:hover { background: rgba(220,38,38,0.1); border-color: var(--color-destructive); }
+
+/* ── Markdown Rendering ── */
+.bubble-content h1, .bubble-content h2, .bubble-content h3 {
+  margin: var(--space-3) 0 var(--space-2); font-weight: 600; line-height: 1.3;
+}
+.bubble-content h1 { font-size: 1.15rem; }
+.bubble-content h2 { font-size: 1.05rem; }
+.bubble-content h3 { font-size: 0.95rem; }
+.bubble-content p { margin: var(--space-2) 0; }
+.bubble-content p:first-child { margin-top: 0; }
+.bubble-content p:last-child { margin-bottom: 0; }
+.bubble-content ul, .bubble-content ol { padding-left: var(--space-5); margin: var(--space-2) 0; }
+.bubble-content li { margin: 2px 0; }
+.bubble-content a { color: var(--color-primary); text-decoration: underline; }
+.bubble-content blockquote {
+  border-left: 3px solid var(--color-primary); padding-left: var(--space-3);
+  margin: var(--space-2) 0; color: var(--color-foreground-muted);
+}
+.bubble-content table { border-collapse: collapse; width: 100%; margin: var(--space-2) 0; font-size: var(--text-xs); }
+.bubble-content th, .bubble-content td { border: 1px solid var(--color-border); padding: var(--space-1) var(--space-2); text-align: left; }
+.bubble-content th { background: var(--color-surface-hover); font-weight: 600; }
+.bubble-content hr { border: none; border-top: 1px solid var(--color-border); margin: var(--space-3) 0; }
+.bubble-content img { max-width: 100%; border-radius: var(--radius-md); }
+
+/* Code blocks */
+.bubble-content pre { position: relative; }
+.bubble-content pre code.hljs {
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+  font-family: var(--font-mono); font-size: 0.8125rem; line-height: 1.55;
+  overflow-x: auto; display: block;
+}
+.bubble-content code:not(.hljs) {
+  font-family: var(--font-mono); font-size: 0.8125rem;
+  background: var(--color-surface-hover); padding: 1px 5px;
+  border-radius: var(--radius-sm); border: 1px solid var(--color-border);
+}
+
+/* Light mode code fix */
+[data-theme="light"] .bubble-content code:not(.hljs) {
+  background: #E2E8F0; color: #0F172A;
+}
+
+/* ── Input Area ── */
+.input-area {
+  padding: var(--space-4) var(--space-5); border-top: 1px solid var(--color-border);
+  background: var(--color-surface); display: flex; gap: var(--space-3); align-items: flex-end;
+}
+.input-wrapper {
+  flex: 1; position: relative; background: var(--color-bg);
+  border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  transition: border-color var(--duration-fast) var(--ease-out);
+  display: flex; align-items: flex-end;
+}
+.input-wrapper:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-muted); }
+.input-wrapper textarea {
+  width: 100%; padding: var(--space-3) var(--space-4); background: transparent;
+  color: var(--color-foreground); border: none; resize: none;
+  font-size: var(--text-sm); font-family: var(--font-sans);
+  line-height: var(--leading-relaxed); max-height: 120px;
+  outline: none; min-height: 44px;
+}
+.input-wrapper textarea::placeholder { color: var(--color-foreground-muted); }
+
+.btn-send {
+  padding: var(--space-3) var(--space-5); background: var(--color-primary);
+  color: #FFF; border: none; border-radius: var(--radius-md); cursor: pointer;
+  font-size: var(--text-sm); font-weight: 600; font-family: var(--font-sans);
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  transition: all var(--duration-fast) var(--ease-out);
+  white-space: nowrap; min-height: 44px; box-shadow: var(--shadow-sm);
+}
+.btn-send:hover { background: var(--color-primary-hover); box-shadow: var(--shadow-md); }
+.btn-send:active { transform: scale(0.97); }
+.btn-send:disabled { background: var(--color-border); color: var(--color-foreground-muted); cursor: not-allowed; box-shadow: none; }
+
+/* ── Skeleton ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--color-surface-hover) 25%, var(--color-border) 50%, var(--color-surface-hover) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s ease-in-out infinite; border-radius: var(--radius-md);
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ── Toast ── */
+.toast-container {
+  position: fixed; top: var(--space-4); right: var(--space-4); z-index: 100;
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.toast {
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-md);
+  font-size: var(--text-sm); font-weight: 500; color: #FFF;
+  animation: toast-in var(--duration-slow) var(--ease-out);
+  box-shadow: var(--shadow-lg); min-width: 200px; max-width: 360px;
+}
+.toast.error { background: var(--color-destructive); }
+.toast.success { background: var(--color-accent); }
+@keyframes toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ── Theme Toggle ── */
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-1) var(--space-2); border-radius: var(--radius-full);
+  border: 1px solid var(--color-border); background: var(--color-bg);
+  cursor: pointer; transition: all var(--duration-fast) var(--ease-out);
+  min-height: 36px;
+}
+.theme-toggle:hover { border-color: var(--color-primary); }
+.theme-toggle .toggle-knob {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--color-primary);
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+[data-theme="light"] .theme-toggle .toggle-knob { transform: translateX(0); }
+[data-theme="dark"] .theme-toggle .toggle-knob { transform: translateX(20px); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-foreground-muted); }
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+/* ── Mobile Sidebar ── */
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 25; opacity: 0; transition: opacity var(--duration-slow) var(--ease-out); }
+.sidebar-overlay.visible { display: block; opacity: 1; }
+.menu-btn { display: none; }
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .sidebar { position: fixed; top: 0; left: 0; bottom: 0; transform: translateX(-100%); box-shadow: var(--shadow-lg); }
+  .sidebar.open { transform: translateX(0); }
+  .menu-btn { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+  .message { max-width: 92%; }
+  .messages { padding: var(--space-4); }
+  .input-area { padding: var(--space-3) var(--space-4); }
+  .chat-header { padding: 0 var(--space-4); }
+  .msg-actions { opacity: 1; } /* Always show on mobile */
+}
+@media (min-width: 768px) { .sidebar-overlay { display: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="对话列表">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <ellipse cx="16" cy="24" rx="11" ry="5" fill="currentColor" opacity="0.15"/>
+        <path d="M5 24c0 2.76 4.92 5 11 5s11-2.24 11-5"/><path d="M7 20c0 2.21 4.03 4 9 4s9-1.79 9-4"/>
+        <path d="M8 24V14c0-4.42 3.58-7 8-7s8 2.58 8 8v10"/><path d="M12 7c1-3 4-4 4-4s3 1 4 4"/>
+        <ellipse cx="16" cy="6" rx="6" ry="1.5"/><circle cx="13" cy="16" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="19" cy="16" r="1.2" fill="currentColor" stroke="none"/><path d="M14 19.5c.8.8 2.4 1 4 .5"/>
+      </svg>
+      🍮Chat
+    </div>
+    <button class="btn-icon menu-btn" id="menu-close-btn" aria-label="关闭侧边栏" onclick="closeSidebar()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <button class="btn-new-chat" onclick="newChat()" aria-label="创建新对话">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    新对话
+  </button>
+
+  <div class="conv-list" id="conv-list" role="listbox" aria-label="对话列表">
+    <div class="skeleton" style="height:40px;margin:4px 0;"></div>
+    <div class="skeleton" style="height:40px;margin:4px 0;"></div>
+    <div class="skeleton" style="height:40px;margin:4px 0;"></div>
+  </div>
+
+  <div class="sidebar-footer">
+    <span id="api-status">加载中...</span>
+    <button class="theme-toggle" id="theme-toggle" aria-label="切换深色/浅色模式" onclick="toggleTheme()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <div class="toggle-knob"></div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+  </div>
+</aside>
+
+<!-- Main Chat -->
+<main class="main">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <button class="btn-icon menu-btn" id="menu-btn" aria-label="打开侧边栏" onclick="openSidebar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div>
+        <div class="chat-header-title" id="conv-title">🍮Chat</div>
+        <div class="chat-header-subtitle" id="model-badge">DeepSeek</div>
+      </div>
+    </div>
+    <div class="chat-header-right">
+      <div style="position:relative;">
+        <div class="user-avatar" id="user-avatar-btn" onclick="toggleUserMenu()" title="用户菜单">U</div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-menu-item" style="color:var(--color-foreground-muted);cursor:default;border-bottom:1px solid var(--color-border);margin-bottom:var(--space-1);padding-bottom:var(--space-2);" id="menu-user-email">---</div>
+          <button class="user-menu-item" onclick="exportMemories()">🧠 导出记忆</button>
+          <button class="user-menu-item danger" onclick="logout()">🚪 退出登录</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="messages" id="messages" role="log" aria-live="polite" aria-label="聊天消息">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon" aria-hidden="true"></div>
+      <div class="welcome-title">你好，我是 🍮Chat</div>
+      <div class="welcome-sub">基于大语言模型，可以回答问题、编写代码、翻译文本。输入消息开始对话。</div>
+    </div>
+  </div>
+
+  <!-- Stop generation button -->
+  <div id="stop-container" style="text-align:center;display:none;">
+    <button class="stop-btn" onclick="stopGeneration()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+      停止生成
+    </button>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrapper">
+      <textarea id="input" rows="1" placeholder="输入消息... (Enter 发送, Shift+Enter 换行)"
+        aria-label="消息输入框" onkeydown="handleKey(event)"></textarea>
+    </div>
+    <button class="btn-send" id="send-btn" onclick="send()" aria-label="发送消息">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      发送
+    </button>
+  </div>
+</main>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════
+   🍮Chat v2 — Client Script
+   Auth + SSE streaming + Markdown + Interaction
+   ═══════════════════════════════════════════════════════ */
+
+// ── Config ──
+const API = "/api";
+const AUTH = "/api/auth";
+
+// ── State ──
+let currentConvId = null;
+let currentUser = null;
+let abortController = null;
+let isGenerating = false;
+
+// ── Marked Setup ──
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  highlight: function(code, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try { return hljs.highlight(code, { language: lang }).value; }
+      catch(e) {}
+    }
+    return hljs.highlightAuto(code).value;
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+
+function getToken() { return localStorage.getItem('access_token'); }
+
+async function checkAuth() {
+  const token = getToken();
+  if (!token) {
+    window.location.href = '/login';
+    return;
+  }
+
+  try {
+    const res = await fetch(`${AUTH}/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      // Try refresh
+      const refreshed = await tryRefresh();
+      if (!refreshed) {
+        localStorage.clear();
+        window.location.href = '/login';
+        return;
+      }
+      await checkAuth();
+      return;
+    }
+    currentUser = await res.json();
+    updateUserUI();
+  } catch(e) {
+    // Server may not have auth enabled yet — continue without auth
+    console.warn('Auth check failed, continuing as anonymous', e);
+    currentUser = { display_name: '本地用户', email: 'local' };
+    updateUserUI();
+  }
+}
+
+async function tryRefresh() {
+  const refresh = localStorage.getItem('refresh_token');
+  if (!refresh) return false;
+  try {
+    const res = await fetch(`${AUTH}/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refresh })
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    localStorage.setItem('access_token', data.access_token);
+    localStorage.setItem('refresh_token', data.refresh_token);
+    return true;
+  } catch(e) { return false; }
+}
+
+function updateUserUI() {
+  if (!currentUser) return;
+  const name = currentUser.display_name || currentUser.email?.split('@')[0] || 'U';
+  const avatar = document.getElementById('user-avatar-btn');
+  avatar.textContent = name[0].toUpperCase();
+  avatar.title = name;
+  document.getElementById('menu-user-email').textContent = currentUser.email || name;
+
+  // Load profile from server
+  if (currentUser.user_id && currentUser.email !== 'local') {
+    document.getElementById('api-status').textContent = name;
+    document.getElementById('api-status').style.color = 'var(--color-accent)';
+  }
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = '/login';
+}
+
+function toggleUserMenu() {
+  document.getElementById('user-menu').classList.toggle('show');
+}
+
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('user-menu');
+  const btn = document.getElementById('user-avatar-btn');
+  if (menu.classList.contains('show') && !btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.classList.remove('show');
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════════════════
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  html.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem("theme");
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
+})();
+
+// ═══════════════════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════════════════
+
+function openSidebar() {
+  document.getElementById("sidebar").classList.add("open");
+  document.getElementById("sidebar-overlay").classList.add("visible");
+  document.getElementById("sidebar-overlay").setAttribute("aria-hidden", "false");
+}
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("sidebar-overlay").classList.remove("visible");
+  document.getElementById("sidebar-overlay").setAttribute("aria-hidden", "true");
+}
+document.getElementById("sidebar-overlay").addEventListener("click", closeSidebar);
+
+// ═══════════════════════════════════════════════════════
+//  CONVERSATIONS
+// ═══════════════════════════════════════════════════════
+
+function authHeaders() {
+  const token = getToken();
+  return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+}
+
+async function loadConversations() {
+  try {
+    const res = await fetch(`${API}/conversations`, { headers: authHeaders() });
+    if (!res.ok) throw new Error('Failed');
+    const data = await res.json();
+    renderConvList(data);
+  } catch(e) { console.error("加载对话列表失败", e); }
+}
+
+function renderConvList(convs) {
+  const el = document.getElementById("conv-list");
+  if (!convs || convs.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:24px 12px;font-size:var(--text-sm);color:var(--color-foreground-muted)">暂无对话</div>';
+    return;
+  }
+  el.innerHTML = convs.map(c => `
+    <div class="conv-item ${c.id === currentConvId ? 'active' : ''}"
+         role="option" aria-selected="${c.id === currentConvId}"
+         onclick="switchConv('${c.id}')" tabindex="0"
+         onkeydown="if(event.key==='Enter')switchConv('${c.id}')">
+      <span class="conv-title">${escHtml(c.title)}</span>
+      <button class="del-btn" aria-label="删除对话" onclick="event.stopPropagation();deleteConv('${c.id}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+      </button>
+    </div>
+  `).join("");
+}
+
+async function newChat() {
+  currentConvId = null;
+  document.getElementById("messages").innerHTML = `
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon" aria-hidden="true"></div>
+      <div class="welcome-title">🍮Chat</div>
+      <div class="welcome-sub">有什么想聊的？</div>
+    </div>`;
+  document.getElementById("conv-title").textContent = "🍮Chat";
+  document.getElementById("input").focus();
+  loadConversations();
+  closeSidebar();
+}
+
+async function switchConv(cid) {
+  currentConvId = cid;
+  document.getElementById("messages").innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:16px;padding:24px">
+      <div class="skeleton" style="height:60px;width:60%"></div>
+      <div class="skeleton" style="height:40px;width:40%;align-self:flex-end"></div>
+      <div class="skeleton" style="height:80px;width:55%"></div>
+    </div>`;
+  try {
+    const res = await fetch(`${API}/conversations/${cid}`, { headers: authHeaders() });
+    if (!res.ok) throw new Error('Failed');
+    const data = await res.json();
+    const msgsEl = document.getElementById("messages");
+    msgsEl.innerHTML = "";
+    if (!data.messages || data.messages.length === 0) {
+      msgsEl.innerHTML = '<div class="welcome"><div class="welcome-title">继续聊天吧</div></div>';
+    } else {
+      data.messages.forEach(m => appendMessage(m.role, m.content));
+    }
+    loadConversations();
+    document.getElementById("conv-title").textContent = data.title || "对话";
+    closeSidebar();
+  } catch(e) {
+    document.getElementById("messages").innerHTML = '<div class="welcome"><div class="welcome-sub" style="color:var(--color-destructive)">加载失败，请重试</div></div>';
+  }
+  scrollBottom();
+}
+
+async function deleteConv(cid) {
+  await fetch(`${API}/conversations/${cid}`, { method: "DELETE", headers: authHeaders() });
+  if (currentConvId === cid) newChat();
+  loadConversations();
+  toast("对话已删除", "success");
+}
+
+// ═══════════════════════════════════════════════════════
+//  SEND & SSE STREAMING
+// ═══════════════════════════════════════════════════════
+
+async function send() {
+  if (isGenerating) return;
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+  if (!text) return;
+
+  setGenerating(true);
+  appendMessage("user", text);
+  const welcomeEl = document.getElementById("welcome");
+  if (welcomeEl) welcomeEl.remove();
+
+  input.value = "";
+  input.style.height = "auto";
+  scrollBottom();
+
+  // Create stream bubble
+  const bubble = createStreamBubble();
+
+  abortController = new AbortController();
+
+  try {
+    const res = await fetch(`${API}/chat`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ message: text, conversation_id: currentConvId, stream: true }),
+      signal: abortController.signal,
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.detail || `API 错误 ${res.status}`);
+    }
+
+    // SSE streaming — fixed parser
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let content = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+
+        if (line.startsWith("event: ")) {
+          const eventType = line.slice(7).trim();
+          // meta/done/error events — handled elsewhere
+          continue;
+        }
+
+        if (line.startsWith("data: ")) {
+          const data = line.slice(6);
+          if (data === "[DONE]") continue;
+          // Decode Unicode escapes
+          try { content += JSON.parse('"' + data.replace(/"/g, '\\"') + '"'); }
+          catch(e) { content += data; }
+          bubble.innerHTML = marked.parse(content);
+          // Highlight code blocks
+          bubble.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+        }
+      }
+    }
+
+    // Get conversation ID if new
+    if (!currentConvId) {
+      const listRes = await fetch(`${API}/conversations`, { headers: authHeaders() });
+      const list = await listRes.json();
+      if (list && list.length > 0) {
+        currentConvId = list[0].id;
+        document.getElementById("conv-title").textContent = list[0].title;
+      }
+    }
+
+    loadConversations();
+  } catch(e) {
+    if (e.name === 'AbortError') {
+      bubble.innerHTML += ' <em style="color:var(--color-foreground-muted)">[已停止]</em>';
+    } else {
+      bubble.innerHTML = marked.parse("抱歉，发送失败：" + escHtml(e.message));
+      toast("发送失败: " + e.message, "error");
+    }
+  } finally {
+    setGenerating(false);
+    abortController = null;
+    scrollBottom();
+  }
+}
+
+function stopGeneration() {
+  if (abortController) {
+    abortController.abort();
+    abortController = null;
+    setGenerating(false);
+    toast("已停止生成", "success");
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  REGENERATE
+// ═══════════════════════════════════════════════════════
+
+async function regenerate(convId) {
+  if (isGenerating) return;
+  if (!convId) convId = currentConvId;
+  if (!convId) return;
+
+  setGenerating(true);
+  const bubble = createStreamBubble();
+  abortController = new AbortController();
+
+  try {
+    const res = await fetch(`${API}/chat/regenerate`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({ conversation_id: convId }),
+      signal: abortController.signal,
+    });
+
+    if (!res.ok) throw new Error('Regenerate failed');
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let content = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (!line.trim() || line.startsWith("event: ")) continue;
+        if (line.startsWith("data: ")) {
+          const data = line.slice(6);
+          if (data === "[DONE]") continue;
+          try { content += JSON.parse('"' + data.replace(/"/g, '\\"') + '"'); }
+          catch(e) { content += data; }
+          bubble.innerHTML = marked.parse(content);
+          bubble.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+        }
+      }
+    }
+  } catch(e) {
+    if (e.name !== 'AbortError') {
+      bubble.innerHTML = marked.parse("重新生成失败：" + escHtml(e.message));
+    }
+  } finally {
+    setGenerating(false);
+    abortController = null;
+    scrollBottom();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  MESSAGE HELPERS
+// ═══════════════════════════════════════════════════════
+
+function appendMessage(role, content) {
+  const el = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = `message ${role}`;
+  div.setAttribute("role", "article");
+
+  const avatarLabel = role === "user" ? (currentUser?.display_name?.[0] || 'U') : 'AI';
+  const rendered = role === "assistant" ? marked.parse(content) : escHtml(content);
+
+  div.innerHTML = `
+    <div class="avatar" aria-hidden="true">${avatarLabel}</div>
+    <div style="flex:1;min-width:0;">
+      <div class="bubble"><div class="bubble-content">${rendered}</div></div>
+      ${role === 'assistant' ? `
+      <div class="msg-actions">
+        <button class="msg-action-btn" onclick="copyMessage(this)" data-content="${escAttr(content)}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          复制
+        </button>
+        <button class="msg-action-btn" onclick="regenerate('${currentConvId || ''}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+          重新生成
+        </button>
+      </div>` : ''}
+    </div>`;
+  el.appendChild(div);
+
+  // Highlight code blocks in rendered markdown
+  if (role === "assistant") {
+    div.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+  }
+}
+
+function createStreamBubble() {
+  const el = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = "message assistant";
+  div.setAttribute("role", "article");
+  div.innerHTML = `
+    <div class="avatar" aria-hidden="true">AI</div>
+    <div style="flex:1;min-width:0;">
+      <div class="bubble"><div class="bubble-content"></div></div>
+    </div>`;
+  el.appendChild(div);
+  return div.querySelector(".bubble-content");
+}
+
+function copyMessage(btn) {
+  const content = btn.dataset.content;
+  navigator.clipboard.writeText(content).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 已复制';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> 复制';
+    }, 2000);
+  }).catch(() => toast("复制失败", "error"));
+}
+
+function scrollBottom() {
+  requestAnimationFrame(() => {
+    const el = document.getElementById("messages");
+    el.scrollTop = el.scrollHeight;
+  });
+}
+
+function setGenerating(v) {
+  isGenerating = v;
+  const btn = document.getElementById("send-btn");
+  const stopContainer = document.getElementById("stop-container");
+
+  if (v) {
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg> 发送中...';
+    stopContainer.style.display = 'block';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> 发送';
+    stopContainer.style.display = 'none';
+  }
+}
+
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+
+function escHtml(s) {
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function escAttr(s) {
+  return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toast(msg, type) {
+  const container = document.getElementById("toast-container");
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = "0";
+    el.style.transition = "opacity 300ms ease-out";
+    setTimeout(() => el.remove(), 300);
+  }, 3500);
+}
+
+async function exportMemories() {
+  try {
+    const res = await fetch(`${API}/memories`, { headers: authHeaders() });
+    if (!res.ok) throw new Error('Failed');
+    const data = await res.json();
+    const text = data.map(m => `${m.key}: ${m.value}`).join('\n');
+    const blob = new Blob([text], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'my-memories.txt'; a.click();
+    URL.revokeObjectURL(url);
+    toast('记忆已导出', 'success');
+    document.getElementById('user-menu').classList.remove('show');
+  } catch(e) { toast('导出失败', 'error'); }
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+
+async function init() {
+  await checkAuth();
+  loadConversations();
+  checkHealth();
+}
+
+async function checkHealth() {
+  try {
+    const res = await fetch("/health");
+    const data = await res.json();
+    if (data.llm_ready) {
+      document.getElementById("model-badge").textContent = data.model || "DeepSeek";
+      if (!currentUser?.email || currentUser.email === 'local') {
+        document.getElementById("api-status").textContent = data.model || "API 已连接";
+        document.getElementById("api-status").style.color = "var(--color-accent)";
+      }
+    }
+  } catch(e) {}
+}
+
+// Textarea auto-resize
+document.getElementById("input").addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = Math.min(this.scrollHeight, 120) + "px";
+});
+
+// Ctrl+K focus input
+document.addEventListener("keydown", function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    document.getElementById("input").focus();
+  }
+  // Escape to stop generation
+  if (e.key === "Escape" && isGenerating) {
+    stopGeneration();
+  }
+});
+
+init();
+</script>
+</body>
+</html>

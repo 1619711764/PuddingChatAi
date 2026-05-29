@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 — 🍮Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   🍮Chat Login — Design System (ui-ux-pro-max)
+   ══════════════════════════════════════════════ */
+
+:root {
+  --color-primary: #2563EB; --color-primary-hover: #1D4ED8;
+  --color-primary-muted: rgba(37,99,235,0.10);
+  --color-bg: #F8FAFC; --color-surface: #FFFFFF;
+  --color-surface-hover: #F1F5F9;
+  --color-foreground: #0F172A; --color-foreground-muted: #64748B;
+  --color-border: #E2E8F0; --color-destructive: #DC2626;
+  --color-accent: #059669;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --radius-md: 10px; --radius-lg: 16px; --radius-full: 9999px;
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms; --duration-normal: 200ms;
+  --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0B1121; --color-surface: #111827;
+  --color-surface-hover: #1E293B;
+  --color-foreground: #F1F5F9; --color-foreground-muted: #94A3B8;
+  --color-border: #1E293B;
+  --color-primary-muted: rgba(37,99,235,0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -4px rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  background: var(--color-bg);
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.login-container {
+  width: 100%; max-width: 400px;
+  padding: var(--space-5);
+}
+
+.login-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg);
+}
+
+.logo {
+  display: flex; align-items: center; justify-content: center; gap: var(--space-3);
+  font-size: 1.5rem; font-weight: 700; color: var(--color-primary);
+  margin-bottom: var(--space-6);
+  letter-spacing: -0.01em;
+}
+
+.tabs { display: flex; gap: 0; margin-bottom: var(--space-6); border-bottom: 2px solid var(--color-border); }
+
+.tab-btn {
+  flex: 1; padding: var(--space-3) var(--space-4);
+  background: none; border: none; border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.875rem; font-weight: 500; font-family: var(--font-sans);
+  color: var(--color-foreground-muted); cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.tab-btn.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+.tab-btn:hover { color: var(--color-foreground); }
+
+.form-panel { display: none; }
+.form-panel.active { display: block; }
+
+.form-group { margin-bottom: var(--space-4); }
+
+.form-label {
+  display: block; font-size: 0.8125rem; font-weight: 500;
+  color: var(--color-foreground); margin-bottom: var(--space-2);
+}
+
+.form-input {
+  width: 100%; padding: var(--space-3) var(--space-4);
+  background: var(--color-bg); border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); color: var(--color-foreground);
+  font-size: 0.875rem; font-family: var(--font-sans);
+  outline: none; transition: border-color var(--duration-fast) var(--ease-out);
+  min-height: 44px;
+}
+
+.form-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-muted); }
+.form-input::placeholder { color: var(--color-foreground-muted); }
+
+.btn {
+  width: 100%; padding: var(--space-3) var(--space-5);
+  border: none; border-radius: var(--radius-md);
+  font-size: 0.875rem; font-weight: 600; font-family: var(--font-sans);
+  cursor: pointer; transition: all var(--duration-fast) var(--ease-out);
+  min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--space-2);
+}
+
+.btn-primary { background: var(--color-primary); color: #FFFFFF; }
+.btn-primary:hover { background: var(--color-primary-hover); }
+.btn-primary:disabled { background: var(--color-border); color: var(--color-foreground-muted); cursor: not-allowed; }
+
+
+.error-msg {
+  color: var(--color-destructive); font-size: 0.8125rem;
+  min-height: 20px; margin-top: var(--space-2); text-align: center;
+}
+
+.success-msg {
+  color: var(--color-accent); font-size: 0.8125rem;
+  min-height: 20px; margin-top: var(--space-2); text-align: center;
+}
+
+.spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%; border-top-color: #fff;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+@media (max-width: 480px) {
+  .login-card { padding: var(--space-6) var(--space-5); }
+}
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="16" cy="24" rx="11" ry="5" fill="currentColor" opacity="0.15"/>
+        <path d="M5 24c0 2.76 4.92 5 11 5s11-2.24 11-5"/>
+        <path d="M7 20c0 2.21 4.03 4 9 4s9-1.79 9-4"/>
+        <path d="M8 24V14c0-4.42 3.58-7 8-7s8 2.58 8 8v10"/>
+        <path d="M12 7c1-3 4-4 4-4s3 1 4 4"/>
+        <ellipse cx="16" cy="6" rx="6" ry="1.5"/>
+        <circle cx="13" cy="16" r="1.2" fill="currentColor" stroke="none"/>
+        <circle cx="19" cy="16" r="1.2" fill="currentColor" stroke="none"/>
+        <path d="M14 19.5c.8.8 2.4 1 4 .5"/>
+      </svg>
+      🍮Chat
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">登录</button>
+      <button class="tab-btn" onclick="switchTab('register')">注册</button>
+    </div>
+
+    <!-- Login Form -->
+    <form class="form-panel active" id="login-panel" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label" for="login-email">邮箱</label>
+        <input class="form-input" type="email" id="login-email" placeholder="your@email.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-password">密码</label>
+        <input class="form-input" type="password" id="login-password" placeholder="输入密码" required autocomplete="current-password" minlength="6">
+      </div>
+      <button class="btn btn-primary" type="submit" id="login-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        登录
+      </button>
+      <div class="error-msg" id="login-error"></div>
+    </form>
+
+    <!-- Register Form -->
+    <form class="form-panel" id="register-panel" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label class="form-label" for="reg-name">昵称</label>
+        <input class="form-input" type="text" id="reg-name" placeholder="你的昵称" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-email">邮箱</label>
+        <input class="form-input" type="email" id="reg-email" placeholder="your@email.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-password">密码（至少6位）</label>
+        <input class="form-input" type="password" id="reg-password" placeholder="至少6位密码" required autocomplete="new-password" minlength="6">
+      </div>
+      <button class="btn btn-primary" type="submit" id="register-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        注册
+      </button>
+      <div class="error-msg" id="register-error"></div>
+      <div class="success-msg" id="register-success"></div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+// ── State ──
+let currentTab = 'login';
+const API_BASE = '/api/auth';
+
+// ── Tab Switch ──
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === (tab === 'login' ? '登录' : '注册')));
+  document.getElementById('login-panel').classList.toggle('active', tab === 'login');
+  document.getElementById('register-panel').classList.toggle('active', tab === 'register');
+  document.getElementById('login-error').textContent = '';
+  document.getElementById('register-error').textContent = '';
+  document.getElementById('register-success').textContent = '';
+}
+
+// ── Login ──
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) { errEl.textContent = '请填写邮箱和密码'; return; }
+
+  setLoading(btn, true);
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || '登录失败');
+
+    // 存储 token
+    localStorage.setItem('access_token', data.access_token);
+    localStorage.setItem('refresh_token', data.refresh_token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // 跳转聊天页
+    window.location.href = '/';
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    setLoading(btn, false);
+  }
+}
+
+// ── Register ──
+async function handleRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('register-btn');
+  const errEl = document.getElementById('register-error');
+  const sucEl = document.getElementById('register-success');
+  errEl.textContent = '';
+  sucEl.textContent = '';
+
+  const display_name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+
+  if (!email || !password) { errEl.textContent = '请填写邮箱和密码'; return; }
+  if (password.length < 6) { errEl.textContent = '密码至少6位'; return; }
+
+  setLoading(btn, true);
+  try {
+    const res = await fetch(`${API_BASE}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, display_name: display_name || undefined }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || '注册失败');
+
+    sucEl.textContent = '注册成功！切换到登录面板登录';
+    document.getElementById('reg-password').value = '';
+
+    // 自动切换到登录
+    setTimeout(() => switchTab('login'), 1500);
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    setLoading(btn, false);
+  }
+}
+
+// ── Helpers ──
+function setLoading(btn, loading) {
+  btn.disabled = loading;
+  if (loading) {
+    btn.dataset.orig = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner"></span> 处理中...';
+  } else {
+    btn.innerHTML = btn.dataset.orig || btn.innerHTML;
+  }
+}
+
+// ── Init ──
+(function() {
+  // 如果已登录直接跳转
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    // 验证 token 是否有效
+    fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => { if (r.ok) window.location.href = '/'; })
+      .catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
