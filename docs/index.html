@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍮 PuddingChat AI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"Microsoft YaHei","PingFang SC",sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#e0e0e0;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:60px 24px}
+.hero{text-align:center;margin-bottom:48px}
+.hero .icon{font-size:72px;margin-bottom:16px}
+.hero h1{font-size:42px;color:#fff;margin-bottom:12px}
+.hero p{font-size:18px;color:#a0a0b8}
+.badge{display:inline-block;background:rgba(255,255,255,.1);padding:4px 14px;border-radius:20px;font-size:13px;margin:4px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px;margin-bottom:20px}
+.card h2{font-size:20px;color:#fff;margin-bottom:16px}
+.card p,.card li{font-size:15px;line-height:1.8;color:#b0b0c0}
+.card ul{padding-left:20px;margin:8px 0}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.features{grid-template-columns:1fr}}
+.feat{background:rgba(255,255,255,.04);border-radius:12px;padding:20px;text-align:center}
+.feat .icon{font-size:32px;margin-bottom:8px}
+.feat h3{font-size:16px;color:#fff;margin-bottom:6px}
+.feat p{font-size:13px;color:#888}
+.btn{display:inline-block;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;text-decoration:none;margin:8px;transition:.2s}
+.btn-primary{background:#6c63ff;color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-outline{border:2px solid rgba(255,255,255,.2);color:#fff}
+.btn-outline:hover{border-color:#6c63ff;color:#6c63ff}
+footer{text-align:center;padding:40px 0;color:#666;font-size:13px}
+pre{background:rgba(0,0,0,.3);padding:16px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6}
+code{color:#6c63ff}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="icon">🍮</div>
+    <h1>PuddingChat AI</h1>
+    <p>多用户 AI 聊天助手 · 风格蒸馏人格引擎</p>
+    <div style="margin-top:16px">
+      <span class="badge">FastAPI</span>
+      <span class="badge">DeepSeek</span>
+      <span class="badge">SQLite</span>
+      <span class="badge">SSE 流式</span>
+      <span class="badge">JWT 认证</span>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feat">
+      <div class="icon">🎭</div>
+      <h3>AI 人格引擎</h3>
+      <p>风格蒸馏，从对话中学习你的语言风格</p>
+    </div>
+    <div class="feat">
+      <div class="icon">💬</div>
+      <h3>流式对话</h3>
+      <p>SSE 逐 Token 输出，打字机效果</p>
+    </div>
+    <div class="feat">
+      <div class="icon">🔐</div>
+      <h3>多用户系统</h3>
+      <p>邮箱注册登录，数据完全隔离</p>
+    </div>
+    <div class="feat">
+      <div class="icon">📋</div>
+      <h3>管理面板</h3>
+      <p>用户统计 + 对话记录查看</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:24px">
+    <h2>🚀 快速启动</h2>
+    <pre><code>git clone https://github.com/1619711764/PuddingChatAi.git
+cd PuddingChatAi
+pip install -r requirements.txt
+python api/main.py
+# 打开 http://localhost:8004</code></pre>
+  </div>
+
+  <div class="card">
+    <h2>🎭 四种 AI 人格</h2>
+    <ul>
+      <li><strong>🍮 布丁</strong> — 毒舌吐槽，专业犀利（默认）</li>
+      <li><strong>💕 男朋友</strong> — 温柔体贴，专属陪伴</li>
+      <li><strong>🔓 无过滤</strong> — 直来直去，不加修饰</li>
+      <li><strong>📚 文档助手</strong> — 严谨结构化输出</li>
+    </ul>
+    <p style="margin-top:12px;font-size:13px;color:#888">风格蒸馏：收集你的对话 → 15 条后自动分析风格 → 更新人格 Prompt → 下次对话更像你</p>
+  </div>
+
+  <div class="card">
+    <h2>🔗 链接</h2>
+    <p style="display:flex;flex-wrap:wrap;gap:12px;margin-top:12px">
+      <a class="btn btn-primary" href="https://github.com/1619711764/PuddingChatAi">GitHub 仓库</a>
+      <a class="btn btn-outline" href="https://github.com/1619711764/PuddingChatAi/blob/master/README.md">完整文档</a>
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  🍮 PuddingChat AI v2.0 · "你这个需求…挺简单的嘛"
+</footer>
+
+</body>
+</html>
