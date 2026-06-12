@@ -14,6 +14,7 @@ load_dotenv(Path(__file__).parent.parent / ".env")
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi.middleware.cors import CORSMiddleware
 from core.config import AppConfig
 from core.llm_client import LLMClient
 from core.database import Database
@@ -22,6 +23,9 @@ from api.routes.chat import router as chat_router, init_chat_routes
 from api.routes.auth import router as auth_router, init_auth_routes
 from api.routes.memory import router as memory_router, init_memory_routes
 from api.routes.wechat_routes import wechat_verify, wechat_callback
+from api.routes.admin import router as admin_router, init_admin_routes
+from api.routes.persona import router as persona_router, init_persona_routes
+from core.persona import PersonaEngine
 
 cfg = AppConfig()
 
@@ -41,18 +45,35 @@ except Exception as e:
 # ── 记忆引擎 ──
 memory_engine = MemoryEngine(llm, db) if llm else None
 
+# ── 人格引擎 ──
+persona_engine = PersonaEngine(db) if db else None
+
 # ── 依赖注入 ──
 init_auth_routes(db)
 if llm:
     init_chat_routes(llm, db)
 if memory_engine:
     init_memory_routes(db, memory_engine)
+init_admin_routes(db, cfg)
+if persona_engine:
+    init_persona_routes(db, persona_engine)
+if llm:
+    init_chat_routes(llm, db, persona_engine)
 
 # ── App ──
 app = FastAPI(
     title="🍮Chat",
     description="🍮Chat — Multi-user AI Chat Assistant",
     version="2.0.0",
+)
+
+# CORS — 允许所有来源（公网隧道需要）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # 静态文件
@@ -81,6 +102,8 @@ async def login_page():
 app.include_router(chat_router)
 app.include_router(auth_router)
 app.include_router(memory_router)
+app.include_router(admin_router)
+app.include_router(persona_router)
 
 
 # ── 微信回调（不需要 Auth） ──
@@ -98,6 +121,14 @@ async def wx_callback(request: Request):
 
 
 # ── Health ──
+
+@app.get("/admin")
+async def admin_page():
+    admin_path = os.path.join(static_dir, "admin.html")
+    if os.path.isfile(admin_path):
+        return FileResponse(admin_path)
+    return JSONResponse({"message": "Admin page not found"}, status_code=404)
+
 
 @app.get("/health")
 async def health():

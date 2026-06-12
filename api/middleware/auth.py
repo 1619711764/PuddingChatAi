@@ -11,11 +11,11 @@ security = HTTPBearer(auto_error=False)
 PUBLIC_PREFIXES = (
     "/health", "/docs", "/openapi.json", "/redoc",
     "/static", "/favicon.ico",
-    "/api/auth/login", "/api/auth/register",
+    "/api/auth/login", "/api/auth/register", "/api/auth/refresh",
     "/api/auth/wechat/qrcode", "/api/auth/wechat/callback",
     "/wx/callback",
 )
-PUBLIC_EXACT = {"/login", "/"}
+PUBLIC_EXACT = {"/login", "/", "/admin"}
 
 
 def is_public_path(path: str) -> bool:

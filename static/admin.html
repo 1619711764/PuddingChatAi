@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍮Chat 管理面板</title>
+<style>
+:root {
+  --color-primary: #2563EB; --color-primary-hover: #1D4ED8;
+  --color-bg: #F8FAFC; --color-surface: #FFFFFF;
+  --color-surface-hover: #F1F5F9;
+  --color-foreground: #0F172A; --color-foreground-muted: #64748B;
+  --color-border: #E2E8F0; --color-destructive: #DC2626;
+  --color-accent: #059669; --color-warning: #D97706;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
+  --radius-md: 10px; --radius-lg: 16px;
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+}
+[data-theme="dark"] {
+  --color-bg: #0B1121; --color-surface: #111827;
+  --color-surface-hover: #1E293B;
+  --color-foreground: #F1F5F9; --color-foreground-muted: #94A3B8;
+  --color-border: #1E293B;
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-foreground);background:var(--color-bg);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+.header{background:var(--color-surface);border-bottom:1px solid var(--color-border);padding:var(--space-4) var(--space-6);display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:1.25rem;font-weight:700;letter-spacing:-0.01em}
+.header svg{margin-right:8px}
+.header-right{display:flex;align-items:center;gap:var(--space-3);font-size:.875rem}
+.container{max-width:1200px;margin:0 auto;padding:var(--space-6)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-4);margin-bottom:var(--space-6)}
+.stat-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-5);text-align:center}
+.stat-value{font-size:2rem;font-weight:700;color:var(--color-primary)}
+.stat-label{font-size:.8125rem;color:var(--color-foreground-muted);margin-top:4px}
+
+/* Login */
+.login-box{max-width:360px;margin:80px auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-8);box-shadow:var(--shadow-md)}
+.login-box h2{margin-bottom:var(--space-4);text-align:center}
+.input{width:100%;padding:var(--space-3) var(--space-4);background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-md);color:var(--color-foreground);font-size:.875rem;font-family:var(--font-sans);outline:none;min-height:44px}
+.input:focus{border-color:var(--color-primary)}
+.btn{width:100%;padding:var(--space-3);border:none;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;cursor:pointer;min-height:44px;font-family:var(--font-sans)}
+.btn-primary{background:var(--color-primary);color:#FFF}
+.btn-primary:hover{background:var(--color-primary-hover)}
+.btn-danger{background:var(--color-destructive);color:#FFF;font-size:.75rem;padding:4px 10px;min-height:28px;width:auto}
+.error{color:var(--color-destructive);font-size:.8125rem;margin-top:var(--space-2);text-align:center;min-height:20px}
+
+/* Table */
+.table-wrap{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8125rem}
+th,td{padding:var(--space-3) var(--space-4);text-align:left;border-bottom:1px solid var(--color-border)}
+th{font-weight:600;color:var(--color-foreground-muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;background:var(--color-surface-hover)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--color-surface-hover)}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.6875rem;font-weight:500}
+.badge-ok{background:rgba(5,150,105,0.15);color:var(--color-accent)}
+.badge-warn{background:rgba(217,119,6,0.15);color:var(--color-warning)}
+.badge-muted{background:var(--color-surface-hover);color:var(--color-foreground-muted)}
+
+.actions{display:flex;gap:4px}
+.refresh{font-size:.75rem;color:var(--color-foreground-muted);cursor:pointer}
+.toast{position:fixed;top:var(--space-4);right:var(--space-4);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);font-size:.875rem;color:#FFF;box-shadow:var(--shadow-md);z-index:100;animation:toast-in .3s ease-out}
+.toast.error{background:var(--color-destructive)}
+.toast.success{background:var(--color-accent)}
+@keyframes toast-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+.tabs{display:flex;gap:0;margin-bottom:var(--space-4);border-bottom:2px solid var(--color-border)}
+.tab{padding:var(--space-2) var(--space-4);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;font-size:.875rem;font-family:var(--font-sans);cursor:pointer;color:var(--color-foreground-muted)}
+.tab.active{color:var(--color-primary);border-bottom-color:var(--color-primary)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.geo-cell{font-size:.75rem;color:var(--color-foreground-muted)}
+
+/* Message viewer */
+.msg-bubble{padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);margin-bottom:var(--space-2);max-width:80%;line-height:1.6;font-size:.8125rem;white-space:pre-wrap;word-break:break-word}
+.msg-user{background:var(--color-primary);color:#FFF;margin-left:auto;border-bottom-right-radius:4px}
+.msg-assistant{background:var(--color-surface-hover);color:var(--color-foreground);border-bottom-left-radius:4px}
+.msg-meta{font-size:.6875rem;color:var(--color-foreground-muted);margin-bottom:2px}
+.msg-user+.msg-meta{text-align:right}
+.msg-sep{display:flex;align-items:center;gap:8px;margin:var(--space-4) 0;color:var(--color-foreground-muted);font-size:.75rem}
+.msg-sep::before,.msg-sep::after{content:'';flex:1;border-top:1px solid var(--color-border)}
+.back-link{cursor:pointer;color:var(--color-primary);font-size:.875rem;margin-bottom:var(--space-4);display:inline-block}
+.back-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div id="login-view">
+  <div class="login-box">
+    <h2>🔐 管理面板</h2>
+    <input class="input" type="password" id="key-input" placeholder="输入管理员密钥" onkeydown="if(event.key==='Enter')login()">
+    <div style="margin-top:var(--space-4)"><button class="btn btn-primary" onclick="login()">登录</button></div>
+    <div class="error" id="login-error"></div>
+  </div>
+</div>
+
+<div id="dashboard-view" style="display:none">
+  <div class="header">
+    <div><h1>🍮Chat 管理面板</h1></div>
+    <div class="header-right">
+      <span style="color:var(--color-foreground-muted);cursor:pointer" onclick="refresh()">🔄 刷新</span>
+      <span style="color:var(--color-destructive);cursor:pointer" onclick="logout()">退出</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats" id="stats"></div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('users')">👥 用户列表</button>
+      <button class="tab" onclick="switchTab('conversations')">💬 对话记录</button>
+    </div>
+
+    <div class="tab-content active" id="tab-users">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>用户</th><th>邮箱</th><th>注册IP</th><th>归属地</th><th>最后IP</th>
+            <th>对话</th><th>消息</th><th>注册时间</th><th>操作</th>
+          </tr></thead>
+          <tbody id="user-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-conversations">
+      <div id="conv-list-view">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>用户</th><th>邮箱</th><th>对话标题</th><th>消息数</th><th>最后更新</th><th>操作</th>
+            </tr></thead>
+            <tbody id="conv-table"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:var(--space-4);text-align:center;font-size:.8125rem;color:var(--color-foreground-muted)" id="conv-pagination"></div>
+      </div>
+      <div id="conv-detail-view" style="display:none">
+        <div class="back-link" onclick="backToConvList()">← 返回对话列表</div>
+        <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-4)">
+          <div style="font-weight:600;margin-bottom:4px" id="detail-title"></div>
+          <div style="font-size:.75rem;color:var(--color-foreground-muted)" id="detail-meta"></div>
+        </div>
+        <div id="detail-messages" style="max-height:70vh;overflow-y:auto;padding:var(--space-4);background:var(--color-bg);border-radius:var(--radius-md)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" style="position:fixed;top:16px;right:16px;z-index:100"></div>
+
+<script>
+let adminKey = '';
+
+function toast(msg, type) {
+  const c = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300) }, 3000);
+}
+
+function login() {
+  const key = document.getElementById('key-input').value.trim();
+  if (!key) { document.getElementById('login-error').textContent = '请输入密钥'; return; }
+  adminKey = key;
+  loadDashboard();
+}
+
+function logout() {
+  adminKey = '';
+  document.getElementById('login-view').style.display = 'block';
+  document.getElementById('dashboard-view').style.display = 'none';
+}
+
+async function api(path, method='GET') {
+  const res = await fetch(`/api/admin${path}`, {
+    method,
+    headers: { 'X-Admin-Key': adminKey }
+  });
+  if (res.status === 401) { logout(); throw new Error('密钥错误'); }
+  if (!res.ok) {
+    let msg = `Error ${res.status}`;
+    try { const e = await res.json(); msg = e.detail || msg; } catch(_) {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
+async function loadDashboard() {
+  try {
+    const stats = await api('/stats');
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('dashboard-view').style.display = 'block';
+
+    document.getElementById('stats').innerHTML = `
+      <div class="stat-card"><div class="stat-value">${stats.users}</div><div class="stat-label">注册用户</div></div>
+      <div class="stat-card"><div class="stat-value">${stats.conversations}</div><div class="stat-label">对话总数</div></div>
+      <div class="stat-card"><div class="stat-value">${stats.messages}</div><div class="stat-label">消息总数</div></div>
+      <div class="stat-card"><div class="stat-value">${stats.memories}</div><div class="stat-label">用户记忆</div></div>
+    `;
+
+    await loadUsers();
+  } catch(e) {
+    document.getElementById('login-error').textContent = e.message;
+    adminKey = '';
+  }
+}
+
+async function loadUsers() {
+  const data = await api('/users');
+  const tbody = document.getElementById('user-table');
+  if (!data.users.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--color-foreground-muted)">暂无用户</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.users.map(u => `
+    <tr>
+      <td><strong>${esc(u.display_name)}</strong>${u.wechat_bound?' <span class="badge badge-ok">微信</span>':''}${u.avatar_url?' <span class="badge badge-ok">头像</span>':''}</td>
+      <td>${esc(u.email)}</td>
+      <td>${u.register_ip || '<span class="badge badge-muted">未记录</span>'}</td>
+      <td class="geo-cell" id="geo-reg-${u.id.slice(0,8)}">${u.register_ip ? '查询中...' : '-'}</td>
+      <td>${u.last_ip || '<span class="badge badge-muted">未记录</span>'}</td>
+      <td>${u.conv_count}</td>
+      <td>${u.msg_count}</td>
+      <td style="font-size:.75rem;color:var(--color-foreground-muted)">${fmtDate(u.created_at)}</td>
+      <td><div class="actions"><button class="btn btn-danger" onclick="deleteUser('${u.id}','${esc(u.email)}')">删除</button></div></td>
+    </tr>
+  `).join('');
+
+  // Load geo info
+  data.users.forEach(u => {
+    if (u.register_ip) loadGeo(u.register_ip, `geo-reg-${u.id.slice(0,8)}`);
+  });
+}
+
+async function loadGeo(ip, elId) {
+  try {
+    const data = await api(`/geo/${ip}`);
+    const el = document.getElementById(elId);
+    if (el && data.country) {
+      el.textContent = `${data.country} ${data.region} ${data.city} · ${data.isp}`;
+    } else if (el) {
+      el.textContent = data.error || '查询失败';
+    }
+  } catch(e) {}
+}
+
+async function deleteUser(id, email) {
+  if (!confirm(`确定要删除用户 ${email} 吗？\n\n此操作将同时删除该用户的所有对话和消息，不可恢复！`)) return;
+  try {
+    await api(`/users/${id}`, 'DELETE');
+    toast(`已删除 ${email}`, 'success');
+    loadUsers();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+let convPage = 1, convTotal = 0;
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', t.textContent.includes(name === 'users' ? '用户' : '对话'));
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const tab = document.getElementById(`tab-${name}`);
+  if (tab) tab.classList.add('active');
+  if (name === 'conversations') loadConversations();
+  if (name === 'users') loadUsers();
+}
+
+async function loadConversations(page = 1) {
+  convPage = page;
+  try {
+    const data = await api(`/conversations?page=${page}&limit=30`);
+    convTotal = data.total;
+    const tbody = document.getElementById('conv-table');
+    if (!data.conversations.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--color-foreground-muted)">暂无对话记录</td></tr>';
+    } else {
+      tbody.innerHTML = data.conversations.map(c => `
+        <tr>
+          <td><strong>${esc(c.user_name)}</strong></td>
+          <td>${esc(c.user_email)}</td>
+          <td>${esc(c.title)}</td>
+          <td>${c.msg_count}</td>
+          <td style="font-size:.75rem;color:var(--color-foreground-muted)">${fmtDate(c.updated_at)}</td>
+          <td><button class="btn btn-primary" style="width:auto;min-height:28px;font-size:.75rem;padding:4px 12px" onclick="viewConversation('${c.id}')">查看</button></td>
+        </tr>
+      `).join('');
+    }
+    // Pagination
+    const totalPages = Math.ceil(convTotal / 30);
+    document.getElementById('conv-pagination').innerHTML = totalPages > 1
+      ? `第 ${page}/${totalPages} 页 · 共 ${convTotal} 条 · ` +
+        (page > 1 ? `<span class="back-link" onclick="loadConversations(${page-1})">上一页</span> ` : '') +
+        (page < totalPages ? `<span class="back-link" onclick="loadConversations(${page+1})">下一页</span>` : '')
+      : `共 ${convTotal} 条对话记录`;
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function viewConversation(cid) {
+  try {
+    const data = await api(`/conversations/${cid}`);
+    document.getElementById('conv-list-view').style.display = 'none';
+    document.getElementById('conv-detail-view').style.display = 'block';
+    document.getElementById('detail-title').textContent = data.title || '未命名对话';
+    document.getElementById('detail-meta').textContent =
+      `用户: ${data.user_name} (${data.user_email}) · ${data.messages.length} 条消息 · ${fmtDate(data.created_at)}`;
+
+    const container = document.getElementById('detail-messages');
+    if (!data.messages.length) {
+      container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--color-foreground-muted)">暂无消息</div>';
+      return;
+    }
+    container.innerHTML = data.messages.map((m, i) => {
+      const roleClass = m.role === 'user' ? 'msg-user' : 'msg-assistant';
+      const roleLabel = m.role === 'user' ? '用户' : 'AI';
+      return `
+        <div class="msg-meta ${m.role==='user'?'':'msg-assistant-meta'}" style="${m.role==='user'?'text-align:right':''}">${roleLabel} · ${fmtDate(m.created_at)}</div>
+        <div class="msg-bubble ${roleClass}">${esc(m.content)}</div>
+      `;
+    }).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function backToConvList() {
+  document.getElementById('conv-list-view').style.display = 'block';
+  document.getElementById('conv-detail-view').style.display = 'none';
+}
+
+function refresh() { loadDashboard(); }
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function fmtDate(ts) { const d=new Date(ts*1000); return d.toLocaleString('zh-CN'); }
+
+document.getElementById('key-input').focus();
+</script>
+</body>
+</html>

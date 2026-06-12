@@ -1,5 +1,4 @@
 # 🍮Chat v2.0 — pip install -r requirements.txt
-# 纯本地方案，零外部服务依赖
 
 fastapi>=0.115.0
 uvicorn[standard]>=0.30.0
@@ -9,3 +8,5 @@ python-dotenv>=1.0.0
 pyjwt>=2.8.0
 bcrypt>=4.0.0
 httpx>=0.27.0
+Pillow>=10.0.0
+aiofiles>=23.0.0

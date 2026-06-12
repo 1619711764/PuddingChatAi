@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
-STATIC_DIR = PROJECT_ROOT / "static"
+DATA_DIR = Path(os.getenv("DATA_DIR", str(PROJECT_ROOT / "data")))
+STATIC_DIR = Path(os.getenv("STATIC_DIR", str(PROJECT_ROOT / "static")))
 
 
 @dataclass
@@ -27,8 +27,8 @@ class AppConfig:
     llm: LLMConfig = field(default_factory=LLMConfig)
     max_history_messages: int = 20
     conversation_ttl_hours: int = 720
-    db_path: str = str(DATA_DIR / "conversations.db")
-    static_dir: str = str(STATIC_DIR)
+    db_path: str = str(Path(os.getenv("DATA_DIR", str(PROJECT_ROOT / "data"))) / "conversations.db")
+    static_dir: str = str(Path(os.getenv("STATIC_DIR", str(PROJECT_ROOT / "static"))))
     memory_extract_threshold: int = 5
     jwt_secret: str = os.getenv("JWT_SECRET", secrets.token_urlsafe(32))
     jwt_expire_hours: int = int(os.getenv("JWT_EXPIRE_HOURS", "168"))  # 7 天

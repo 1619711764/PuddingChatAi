@@ -18,6 +18,17 @@ data/*.db*
 .vscode/
 .idea/
 
+# ngrok
+ngrok.exe
+ngrok_tmp/
+
+# Static uploads (keep dir but not files)
+static/avatars/*.png
+static/avatars/*.jpg
+static/avatars/*.jpeg
+static/avatars/*.gif
+static/avatars/*.webp
+
 # OS
 .DS_Store
 Thumbs.db

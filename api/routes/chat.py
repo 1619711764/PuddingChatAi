@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from core.llm_client import LLMClient
 from core.database import Database
 from core.memory import MemoryEngine
+from core.persona import PersonaEngine, _default_prompt
 from api.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api", tags=["chat"])
@@ -15,12 +16,15 @@ router = APIRouter(prefix="/api", tags=["chat"])
 llm: LLMClient | None = None
 db: Database | None = None
 memory_engine: MemoryEngine | None = None
+persona_engine: PersonaEngine | None = None
 
 
-def init_chat_routes(llm_client: LLMClient, database: Database):
-    global llm, db, memory_engine
+def init_chat_routes(llm_client: LLMClient, database: Database,
+                     pers_engine: PersonaEngine = None):
+    global llm, db, memory_engine, persona_engine
     llm = llm_client
     db = database
+    persona_engine = pers_engine
     if llm and db:
         memory_engine = MemoryEngine(llm, db)
 
@@ -29,20 +33,18 @@ class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=8000)
     conversation_id: str | None = None
     stream: bool = True
+    persona_id: str | None = None
 
 
 class RegenerateRequest(BaseModel):
     conversation_id: str
 
 
-SYSTEM_PROMPT = """You are Pudding AI (🍮Chat), a smart and friendly AI assistant fluent in Chinese and English.
+class UpdateTitleRequest(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)
 
-Your traits:
-- Answer concisely and clearly, no fluff
-- If unsure, honestly say you don't know
-- Code questions: give runnable examples
-- Long answers: structure with headings, lists, code blocks
-- Warm but professional tone"""
+
+SYSTEM_PROMPT = _default_prompt()
 
 
 # ── 路由 ──
@@ -72,18 +74,27 @@ async def chat(req: ChatRequest, request: Request, user_id: str = Depends(get_cu
     # 保存用户消息
     db.add_message(cid, "user", req.message)
 
+    # 收集风格样本（用于蒸馏 AI 人格）
+    if persona_engine and user_id:
+        persona_engine.collect_style(user_id, req.message, req.persona_id)
+
     # 获取对话历史
     history = db.get_messages(cid, limit=30)
 
-    # 构建 messages
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    # 构建 messages — 使用人格引擎
+    if persona_engine:
+        system_content = persona_engine.build_system_prompt(
+            req.persona_id, user_id, memory_engine)
+        if req.persona_id:
+            persona_engine.record_usage(req.persona_id)
+    else:
+        system_content = SYSTEM_PROMPT
+        if memory_engine:
+            memory_ctx = memory_engine.build_context(user_id)
+            if memory_ctx:
+                system_content += memory_ctx
 
-    # 注入用户记忆上下文
-    if memory_engine:
-        memory_ctx = memory_engine.build_context(user_id)
-        if memory_ctx:
-            messages[0]["content"] += memory_ctx
-
+    messages = [{"role": "system", "content": system_content}]
     for m in history:
         messages.append({"role": m["role"], "content": m["content"]})
 
@@ -127,6 +138,18 @@ async def _stream_reply(conv_id: str, user_id: str, messages: list[dict]):
                     memory_engine.extract_and_save(user_id, conv_id)
             except Exception:
                 pass
+        # 触发风格蒸馏（每 15 条一次）
+        if full_reply and persona_engine and user_id:
+            try:
+                count = db.count_style_samples(user_id)
+                if count >= 15 and count % 15 < 3:
+                    # 找到该用户关联的人格 ID
+                    personas = db.get_personas(include_system=True)
+                    for p in personas:
+                        if not p["is_system"]:
+                            persona_engine.distill(user_id, p["id"], llm)
+            except Exception:
+                pass
 
 
 # ── Regenerate ──
@@ -148,11 +171,16 @@ async def regenerate(req: RegenerateRequest, request: Request, user_id: str = De
     if not user_messages:
         raise HTTPException(400, "No message to regenerate")
 
-    llm_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    if memory_engine:
-        memory_ctx = memory_engine.build_context(user_id)
-        if memory_ctx:
-            llm_messages[0]["content"] += memory_ctx
+    if persona_engine:
+        system_content = persona_engine.build_system_prompt(None, user_id, memory_engine)
+    else:
+        system_content = SYSTEM_PROMPT
+        if memory_engine:
+            memory_ctx = memory_engine.build_context(user_id)
+            if memory_ctx:
+                system_content += memory_ctx
+
+    llm_messages = [{"role": "system", "content": system_content}]
     for m in messages:
         llm_messages.append({"role": m["role"], "content": m["content"]})
 
@@ -184,21 +212,16 @@ async def get_conversation(conv_id: str, request: Request, user_id: str = Depend
 
 
 @router.patch("/conversations/{conv_id}")
-async def update_conversation(conv_id: str, request: Request, user_id: str = Depends(get_current_user)):
+async def update_conversation(conv_id: str, req: UpdateTitleRequest, user_id: str = Depends(get_current_user)):
     if not db:
         raise HTTPException(500, "Service not initialized")
     conv = db.get_conversation(conv_id)
     if not conv or conv.get("user_id") != user_id:
         raise HTTPException(403, "Access denied")
 
-    body = await request.body()
-    import json
-    data = json.loads(body) if body else {}
-    title = data.get("title", "").strip()
-    if title:
-        db.update_title(conv_id, title)
-        return {"ok": True, "title": title}
-    return {"ok": False, "detail": "title is required"}
+    title = req.title.strip()
+    db.update_title(conv_id, title)
+    return {"ok": True, "title": title}
 
 
 @router.delete("/conversations/{conv_id}")
